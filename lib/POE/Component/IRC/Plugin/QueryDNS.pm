@@ -5,7 +5,7 @@ use warnings;
 use POE;
 use POE::Component::Client::DNS;
 use POE::Component::IRC::Plugin qw(:ALL);
-use POE::Component::IRC::Common qw(irc_ip_is_ipv4);
+use Net::IP qw[ip_is_ipv4];
 use vars qw($VERSION);
 
 $VERSION = '1.00';
@@ -14,7 +14,7 @@ sub new {
   my $package = shift;
   my %args = @_;
   $args{lc $_} = delete $args{$_} for keys %args;
-  delete $args{resolver} 
+  delete $args{resolver}
 	unless ref $args{resolver} and $args{resolver}->isa('POE::Component::Client::DNS');
   bless \%args, $package;
 }
@@ -66,7 +66,7 @@ sub _dns_query {
   return unless $cmdstr and $query;
   $poe_kernel->state( '_querydns_response', $self, '_response' );
   $type = 'A' unless $type and $type =~ /^(A|CNAME|NS|MX|PTR|TXT|AAAA|SRV|SOA)$/i;
-  $type = 'PTR' if irc_ip_is_ipv4( $query );
+  $type = 'PTR' if ip_is_ipv4( $query );
   my $response = $self->{resolver}->resolve(
 	event => '_querydns_response',
 	host => $query,
