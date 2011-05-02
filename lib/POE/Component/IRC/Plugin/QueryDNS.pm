@@ -109,6 +109,15 @@ sub _response {
 
 =pod
 
+=begin Pod::Coverage
+
+  PCI_register
+  PCI_unregister
+  S_public
+  S_msg
+
+=end Pod::Coverage
+
 =head1 SYNOPSIS
 
   use strict;
