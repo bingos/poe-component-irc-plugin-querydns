@@ -1,14 +1,13 @@
 package POE::Component::IRC::Plugin::QueryDNS;
 
+#ABSTRACT: A POE::Component::IRC plugin for IRC based DNS queries
+
 use strict;
 use warnings;
 use POE;
 use POE::Component::Client::DNS;
 use POE::Component::IRC::Plugin qw(:ALL);
 use Net::IP qw[ip_is_ipv4];
-use vars qw($VERSION);
-
-$VERSION = '1.00';
 
 sub new {
   my $package = shift;
@@ -90,7 +89,7 @@ sub _response {
      foreach my $ans ( $response->{response}->answer() ) {
 	if ( $ans->type() eq 'SOA' ) {
 	   push @answers, 'SOA=' . join(':', $ans->mname, $ans->rname, $ans->serial, $ans->refresh, $ans->retry, $ans->expire, $ans->minimum );
-	} 
+	}
 	else {
 	   push @answers, join('=', $ans->type(), $ans->rdatastr() );
 	}
@@ -108,11 +107,7 @@ sub _response {
 
 1;
 
-__END__
-
-=head1 NAME
-
-POE::Component::IRC::Plugin::QueryDNS - A POE::Component::IRC plugin for IRC based DNS queries
+=pod
 
 =head1 SYNOPSIS
 
@@ -162,23 +157,23 @@ POE::Component::IRC::Plugin::QueryDNS - A POE::Component::IRC plugin for IRC bas
 
 =head1 DESCRIPTION
 
-POE::Component::IRC::Plugin::QueryDNS is a L<POE::Component::IRC> plugin that provides DNS query 
+POE::Component::IRC::Plugin::QueryDNS is a L<POE::Component::IRC> plugin that provides DNS query
 facilities to the channels it occupies and via private messaging.
 
-It uses L<POE::Component::Client::DNS> to do non-blocking DNS queries. By default the plugin attempts 
+It uses L<POE::Component::Client::DNS> to do non-blocking DNS queries. By default the plugin attempts
 to use L<POE::Component::IRC>'s internal PoCo-Client-DNS resolver object, but will spawn its own copy.
 You can supply your own resolver object via the constructor.
 
 =head1 CONSTRUCTOR
 
-=over 
+=over
 
 =item C<new>
 
 Creates a new plugin object. Takes some optional parameter:
 
   'command', define the command that will trigger DNS queries, default is 'dns';
-  'privmsg', set to a true value to specify that the bot should reply with PRIVMSG instead of 
+  'privmsg', set to a true value to specify that the bot should reply with PRIVMSG instead of
 	     NOTICE to privmsgs that it receives.
   'resolver', specify a POE::Component::Client::DNS object that the plugin should use,
 	      the default is to try and use POE::Component::IRC's resolver;
@@ -193,7 +188,7 @@ The bot replies to requests in the following form, when addressed:
 
 Of course, if you changed the C<command> in the constructor it will be something different to C<dns>.
 
-C<query> maybe a hostname, a zone, an IP address, anything that you want to query DNS for. 
+C<query> maybe a hostname, a zone, an IP address, anything that you want to query DNS for.
 
 C<type> can be C<A>, C<PTR>, C<CNAME>, C<NS>, C<MX>, C<TXT>, C<AAAA>, C<SRV> or C<SOA>. If it isn't specified the default is
 C<A> unless the C<query> is an IP address in which case the default is C<PTR>.
@@ -216,19 +211,9 @@ Some examples:
    < you> bot: dns perl.org txt
    < bot> No answers for perl.org
 
-   # Specify a type of 'SOA' 
+   # Specify a type of 'SOA'
    < you> bot: dns perl.org soa
    < bot> perl.org [ SOA=ns1.us.bitnames.com:dnsoper.bitnames.com:2008011304:5400:5400:604800:300 ]
-
-=head1 AUTHOR
-
-Chris C<BinGOs> Williams <chris@bingosnet.co.uk>
-
-=head1 LICENSE
-
-Copyright E<copy> Chris Williams.
-
-This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
